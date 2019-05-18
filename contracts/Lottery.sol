@@ -15,7 +15,7 @@ contract Lottery {
     
     // This function is payable because it needs ether to be sent to it for registering
     function registerForLottery() public payable {
-        require(msg.value > 0.01 ether);
+        require(msg.value > 0.1 ether);
         memberList.push(msg.sender);
     }
     
