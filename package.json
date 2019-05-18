@@ -1,0 +1,29 @@
+{
+  "name": "ethereumcourse_lotteryapplication",
+  "version": "1.0.0",
+  "description": "LotteryApplication_Ethereum",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sreeharshau/EthereumCourse_LotteryApplication.git"
+  },
+  "keywords": [
+    "Ethereum"
+  ],
+  "author": "Harsha",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sreeharshau/EthereumCourse_LotteryApplication/issues"
+  },
+  "homepage": "https://github.com/sreeharshau/EthereumCourse_LotteryApplication#readme",
+  "dependencies": {
+    "ganache-cli": "^6.4.3",
+    "mocha": "^6.1.4",
+    "solc": "^0.5.8",
+    "truffle": "^5.0.18",
+    "web3": "^1.0.0-beta.55"
+  }
+}
