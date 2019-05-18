@@ -3,14 +3,11 @@ const HDWalletProvider = require('truffle-hdwallet-provider');
 const Web3 = require('web3');
 const { interface, bytecode } = require('./compile.js');
 
-// Importing this from an external file here so that my mnemonix isn't leaked on Git :P
+// Importing this from an external file here so that my mnemonic isn't leaked on Git :P
 // Export the mnemonic with the parameter name accountMnemonic in your own repo
 const accountMnemonic = require('./mnemonicPhrase.js').accountMnemonic;
 
 console.log('Using mnemonic:', accountMnemonic, "to generate unlocked accounts for deployment");
-
-// Random initial message
-const DEPLOY_MSG = 'blahInitialMessage';
 
 // This time we create a provider to pass to Web3
 // Arg 1 is the account mnemonic phrase which is used to derive public and private keys and thus, unlock the accounts
@@ -32,12 +29,12 @@ const deploy = async () => {
 	console.log("Attempting to deploy contract using account:", fetchedAccounts[0]);
 
 	// Deploy contract using the second account i.e. fetchedAccounts[1] since it has Rinkeby ether
-	const inbox = await new web3.eth.Contract(JSON.parse(interface))
-	.deploy({ data: bytecode, arguments: [DEPLOY_MSG] })
+	const lottery = await new web3.eth.Contract(JSON.parse(interface))
+	.deploy({ data: bytecode })
 	.send({ from: fetchedAccounts[0], gas: '1000000' });
 
 	// IMPORTANT!: Log the deployment address for future use, either onto console or into a file
-	console.log("Contract deployed to address:",inbox.options.address);
+	console.log("Contract deployed to address:",lottery.options.address);
 };
 
 

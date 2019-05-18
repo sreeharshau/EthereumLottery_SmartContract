@@ -17,37 +17,40 @@ const {interface, bytecode} = require('../compile');
 
 // Variable declaration outside using let enables shared access to these between beforeEach and the its in describe
 let fetchedAccounts;
+let managerAccount;
 let lottery;
 
 beforeEach(async () => {
 	fetchedAccounts = await web3.eth.getAccounts();
-	console.log("Accounts: ", fetchedAccounts);
+	managerAccount = fetchedAccounts[0];
+
 	
 	lottery = await new web3.eth.Contract(interface)
-	.deploy({data: '0x' + bytecode })
-	.send({from: fetchedAccounts[0], gas: '1000000'});
+	.deploy({data: bytecode })
+	.send({from: managerAccount, gas: '1000000'});
 
+	// console.log(lottery._address);
 	// console.log(lottery);
 
 });
 
 describe("Lottery test cases", () => {
 	it("Contract Deployment Check", () => {
-		assert.ok(lottery.address);
+		assert.ok(lottery.options.address);
 	});
-	it("Manager address set correctly", () => {
-		assert.equal(lottery.managerAddress = fetchedAccounts[0]);
+	it("Manager address set correctly", async () => {
+		assert.equal(await lottery.methods.managerAddress().call(), managerAccount);
 	});
-	// it("Check Lottery Registration (Manager)", async () => {
-	// 	transactionAccount = fetchedAccounts[0];
-	// 	transHash = lottery.methods.registerForLottery().send({from:transactionAccount, value: 0.2 ether});
-	// 	newEntry = inbox.methods.memberList(0);
-	// 	assert.equal(newEntry, transactionAccount);
-	// });
-	// it("Check Lottery Registration (Third Party)", async () => {
-	// 	transactionAccount = fetchedAccounts[1];
-	// 	transHash = lottery.methods.registerForLottery().send({from:transactionAccount, value: 0.2 ether});
-	// 	newEntry = inbox.methods.memberList(0);
-	// 	assert.equal(newEntry, transactionAccount);
-	// });
+	it("Check Lottery Registration (Manager)", async () => {
+		transactionAccount = fetchedAccounts[0];
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2",'ether')});
+		newEntry = await lottery.methods.memberList(0).call();
+		assert.equal(newEntry, transactionAccount);
+	});
+	it("Check Lottery Registration (Third Party)", async () => {
+		transactionAccount = fetchedAccounts[1];
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2", "ether")});
+		newEntry = await lottery.methods.memberList(0).call();
+		assert.equal(newEntry, transactionAccount);
+	});
 });
