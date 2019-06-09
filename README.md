@@ -1,4 +1,4 @@
-# EthereumCourse_LotteryApplication
+# Smart Contract For an Ethereum-Based Lottery
 
 => This is the back-end for the Crypto Lottery application. This is an ethereum based lottery contract which works within the following parameters:
 
