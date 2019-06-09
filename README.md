@@ -13,4 +13,5 @@
 	-> The manager cannot destroy the contract unless it is empty
 
 => The latest copy of this contract is currently deployed on the Rinkeby Test Network at the address: 0x68ab46B1C9d4907976E1301be9e3f1367F0991f3
+
 	-> Please use the UI provided at <Insert UI Repo link here> to interact with this contract
