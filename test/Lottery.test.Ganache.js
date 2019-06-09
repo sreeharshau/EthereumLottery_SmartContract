@@ -23,8 +23,8 @@ beforeEach(async () => {
 	managerAccount = fetchedAccounts[0];
 	
 	lottery = await new web3.eth.Contract(interface)
-	.deploy({data: bytecode })
-	.send({from: managerAccount, gas: '1000000'});
+	.deploy({data: '0x' + bytecode })
+	.send({from: managerAccount, gas: '5000000'});
 
 });
 
@@ -40,22 +40,58 @@ describe("Lottery test cases", () => {
 	it("Lottery Registration (Manager)", async () => {
 		// Check if manager account is correctly able to register for the lottery
 		transactionAccount = managerAccount;
-		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2",'ether')});
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2",'ether'), gas: '5000000'});
 		newEntry = await lottery.methods.memberList(0).call();
+
+		var returnedObject  = await lottery.methods.getCurrentWinningChances().call({from: transactionAccount});
+
+		winningChances = returnedObject[0];
+		totalChances = returnedObject[1];
+
+		// Check for new entry in memberList as well as correct winning and total chances
 		assert.equal(newEntry, transactionAccount);
+		assert.equal(winningChances, 2);
+		assert.equal(totalChances, 2);
 	});
 	it("Lottery Registration (Third Party)", async () => {
 		// Check if accounts other than the manager are able to correctly register for the lottery
 		transactionAccount = fetchedAccounts[1];
-		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2", "ether")});
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2", "ether"), gas: '5000000'});
 		newEntry = await lottery.methods.memberList(0).call();
+		
+		var returnedObject  = await lottery.methods.getCurrentWinningChances().call({from: transactionAccount});
+
+		winningChances = returnedObject[0];
+		totalChances = returnedObject[1];
+
+		// Check for new entry in memberList as well as correct winning and total chances
 		assert.equal(newEntry, transactionAccount);
+		assert.equal(winningChances, 2);
+		assert.equal(totalChances, 2);
+
+		// Check for multiple registrations working correctly
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2", "ether"), gas: '5000000'});
+
+		var returnedObject  = await lottery.methods.getCurrentWinningChances().call({from: transactionAccount});
+
+		memberList = await lottery.methods.returnRegisteredMembers().call();
+
+		winningChances = returnedObject[0];
+		totalChances = returnedObject[1];
+
+		// Check for duplicate memberList entries
+		assert.equal(memberList.length, 1);
+
+		// Check to see that chances are incremented correctly
+		assert.equal(winningChances, 4);
+		assert.equal(totalChances, 4);
+
 	});
 	it("Multiple Registrations (Manager + Third Party)", async () => {
 		// Check if multiple registrations are correctly logged
-		transHash1 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("0.2",'ether')});
-		transHash2 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[1], value:web3.utils.toWei("0.2",'ether')});
-		transHash3 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[2], value:web3.utils.toWei("0.2",'ether')});
+		transHash1 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("0.2",'ether'), gas: '5000000'});
+		transHash2 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[1], value:web3.utils.toWei("0.2",'ether'), gas: '5000000'});
+		transHash3 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[2], value:web3.utils.toWei("0.2",'ether'), gas: '5000000'});
 
 		memberList = await lottery.methods.returnRegisteredMembers().call();
 
@@ -67,7 +103,7 @@ describe("Lottery test cases", () => {
 	});
 	it("Minimum Ether For Registration", async () => {
 		// Check the entry condition for registration (minimum of 0.1 ether)
-		lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("0.01",'ether')}, function(error, transHash1){
+		lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("0.01",'ether'), gas: '5000000'}, function(error, transHash1){
 				if(error)
 					assert(true);
 				else
@@ -86,8 +122,8 @@ describe("Lottery test cases", () => {
 	it("Access to PickLotteryWinner Enabled - Manager", async () => {
 		// Check if the manager account can pick a winner
 		transactionAccount = managerAccount;
-		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2",'ether')}); 
-		lottery.methods.pickLotteryWinner().send({from:managerAccount}, function(error, transHash1){
+		transHash = await lottery.methods.registerForLottery().send({from:transactionAccount, value:web3.utils.toWei("0.2",'ether'), gas: '5000000'}); 
+		lottery.methods.pickLotteryWinner().send({from:managerAccount , gas: '5000000'}, function(error, transHash1){
 				if(error)
 					assert(false);
 				else
@@ -98,9 +134,9 @@ describe("Lottery test cases", () => {
 		// Check a complete run through of a lottery round
 		
 		// Register 3 members (1 Manager + 2 ThirdParty) for the lottery
-		transHash1 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("2",'ether')});
-		transHash2 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[1], value:web3.utils.toWei("2",'ether')});
-		transHash3 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[2], value:web3.utils.toWei("2",'ether')});
+		transHash1 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[0], value:web3.utils.toWei("2",'ether'), gas: '5000000'});
+		transHash2 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[1], value:web3.utils.toWei("1",'ether'), gas: '5000000'});
+		transHash3 = await lottery.methods.registerForLottery().send({from:fetchedAccounts[2], value:web3.utils.toWei("0.3",'ether'), gas: '5000000'});
 
 		// Log balances of all 3 accounts after registration
 		let balanceBeforeWins = [];
@@ -110,7 +146,7 @@ describe("Lottery test cases", () => {
 			balanceBeforeWins[i] = await web3.eth.getBalance(fetchedAccounts[i]);
 
 		// Try to pick a winner
-		transHash4 = await lottery.methods.pickLotteryWinner().send({from:managerAccount});
+		transHash4 = await lottery.methods.pickLotteryWinner().send({from:managerAccount, gas: '5000000'});
 
 		// Check if one of the account balances increased to indicate that a winner was picked and winnings transferred correctly
 		for (i = 0; i < 3; i++){

@@ -29,11 +29,15 @@ const deploy = async () => {
 	console.log("Attempting to deploy contract using account:", fetchedAccounts[0]);
 
 	// Deploy contract using the second account i.e. fetchedAccounts[1] since it has Rinkeby ether
-	const lottery = await new web3.eth.Contract(JSON.parse(interface))
-	.deploy({ data: bytecode })
-	.send({ from: fetchedAccounts[0], gas: '1000000' });
+	// Never forget '0x' in front of bytecode, otherwise it tries converting the already in hex bytecode to hex, doubles it in size and fails with a gasLimit error
+	// No need to JSON.parse interface in newer web3 versions
+	
+	const lottery = await new web3.eth.Contract(interface)
+	.deploy({ data: '0x' + bytecode })
+	.send({ from: fetchedAccounts[0], gas: '5000000' });
 
-	// IMPORTANT!: Log the deployment address for future use, either onto console or into a file
+	// IMPORTANT!: Log the deployment address and interface for future use, either onto console or into a file
+	console.log(interface)
 	console.log("Contract deployed to address:",lottery.options.address);
 };
 

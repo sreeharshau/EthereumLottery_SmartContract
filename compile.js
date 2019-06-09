@@ -28,14 +28,9 @@ output = JSON.parse(solc.compile(JSON.stringify({
   },
 })));
 
+// Export bytecode and ABI for use by other modules
 module.exports.bytecode = output.contracts['Lottery.sol']["Lottery"].evm.bytecode.object;
 module.exports.interface = output.contracts['Lottery.sol']["Lottery"].abi;
 
-// console.log(output.contracts['Lottery.sol']["Lottery"].evm.bytecode.object);
-// console.log(output.contracts['Lottery.sol']["Lottery"].abi);
 
-// for (var contractName in output.contracts['Lottery.sol']) {
-// 	console.log(contractName + ': ' + output.contracts['Lottery.sol'][contractName].evm.bytecode.object)
-// 	console.log(output.contracts['Lottery.sol'][contractName].abi)
-// }
 
