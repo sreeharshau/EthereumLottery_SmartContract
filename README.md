@@ -1,9 +1,10 @@
 # EthereumCourse_LotteryApplication
 
 => This is the back-end for the Crypto Lottery application. This is an ethereum based lottery contract which works within the following parameters:
-	-> The account used to create the contract is the manager account
-	-> All players need to contribute ether in multiples of 0.1 ether and atleast 0.2 ether to register for the lottery
-		-> Winning chances increase with larger ether contributions
+
+	-> The account used to create the contract is the manager account	
+	-> All players need to contribute ether in multiples of 0.1 ether and atleast 0.2 ether to register for the lottery	
+		-> Winning chances increase with larger ether contributions		
 		-> Multiple registrations from the same account increase winning chances
 		-> The manager can also be a participant in the lottery
 	-> The manager is the only account with permissions to choose a winner
